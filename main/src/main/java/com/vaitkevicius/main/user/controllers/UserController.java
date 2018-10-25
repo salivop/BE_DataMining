@@ -8,6 +8,7 @@ import com.vaitkevicius.main.user.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,7 @@ public class UserController {
     UserValidator userValidator;
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserDto getUser(@PathVariable String id){
@@ -37,6 +39,7 @@ public class UserController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public List<UserDto> getAllUsers() {
@@ -46,6 +49,7 @@ public class UserController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable String id) {
@@ -55,11 +59,12 @@ public class UserController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT)
+    @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody @Validated(Create.class) UserDto userDto, Errors errors) {
+        userValidator.validateCreate(userDto, errors);
         logger.info("Saving user to Mongo DB");
-        userValidator.passwordLength(userDto, errors);
         if(errors.hasErrors()) {
             return new ResponseEntity<>(errors.getAllErrors(),HttpStatus.BAD_REQUEST);
         }
@@ -72,7 +77,7 @@ public class UserController {
 
     @ResponseBody
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<?> update(@RequestBody UserDto userDto, Errors errors) {
         if (errors.hasErrors()) {
             return new ResponseEntity<>(errors.getAllErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
