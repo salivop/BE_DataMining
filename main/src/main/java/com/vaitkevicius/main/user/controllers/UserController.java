@@ -30,10 +30,11 @@ public class UserController {
     UserValidator userValidator;
 
     @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public UserDto getUser(@PathVariable String id){
+        userValidator.getUser(id);
         logger.info("Getting user by id: {}", id);
         return new UserConverter().toDto(userService.getUser(id));
     }
@@ -53,6 +54,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
     public ResponseEntity<?> delete(@PathVariable String id) {
+        userValidator.deleteUser(id);
         logger.info("Deleting user by id: {}", id);
         userService.delete(id);
         return new ResponseEntity<Void>(HttpStatus.OK);
@@ -64,7 +66,7 @@ public class UserController {
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<?> save(@RequestBody @Validated(Create.class) UserDto userDto, Errors errors) {
         userValidator.validateCreate(userDto, errors);
-        logger.info("Saving user to Mongo DB");
+        logger.info("Saving user");
         if(errors.hasErrors()) {
             return new ResponseEntity<>(errors.getAllErrors(),HttpStatus.BAD_REQUEST);
         }
@@ -76,9 +78,12 @@ public class UserController {
     }
 
     @ResponseBody
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
     @RequestMapping(method = RequestMethod.PUT)
     public ResponseEntity<?> update(@RequestBody UserDto userDto, Errors errors) {
+        userValidator.validateCreate(userDto, errors);
+        logger.info("Updating user");
         if (errors.hasErrors()) {
             return new ResponseEntity<>(errors.getAllErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
         }

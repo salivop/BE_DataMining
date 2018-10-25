@@ -15,21 +15,13 @@ public class UserValidator extends AbstractValidator<UserDto> {
     @Autowired
     UserRepository userRepository;
 
-
-
     @Override
     public void doValidate(UserDto userDto, Errors errors){
     }
 
-    public void passwordLength(UserDto userDto, Errors errors){
-        if(userDto.getPassword().length() > 6){
-            errors.rejectValue("User password is too long", "Rejected");
-        }
-    }
-
     public void validateCreate(UserDto userDto, Errors errors){
         validateLogin( userDto.getLogin(), errors);
-        //Here could be many validators....
+        passwordLength(userDto.getPassword(), errors);
     }
 
     private void validateLogin( String login, Errors errors){
@@ -37,6 +29,26 @@ public class UserValidator extends AbstractValidator<UserDto> {
             if(userRepository.findOneByLogin(login) != null) {
                 errors.rejectValue("User with this Login already exist {}", login);
             }
+        }
+    }
+
+    private void passwordLength(String password, Errors errors){
+        if(password.length() > 6){
+            errors.rejectValue("User password {} is too long", password);
+        }
+    }
+
+    public void getUser(String id){
+        if(!userRepository.existsById(id)) {
+            log.error("The user with id {} does not exists", id);
+            throw new IllegalArgumentException("The user with id does not exists");
+        }
+    }
+
+    public void deleteUser(String id){
+        if(!userRepository.existsById(id)) {
+            log.error("The user with id {} does not exists", id);
+            throw new IllegalArgumentException("The user with id does not exists");
         }
     }
 }
