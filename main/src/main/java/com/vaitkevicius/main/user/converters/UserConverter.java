@@ -10,12 +10,12 @@ public class UserConverter extends AbstractConverter<User, UserDto> {
     public UserDto convertToDto(User user) {
         return UserDto.builder()
                 .id(user.getId())
-                .login(user.getLogin())
+                .email(user.getEmail())
                 .password(user.getPassword())
                 .name(user.getName())
                 .surname(user.getSurname())
-                .email(user.getEmail())
                 .phoneNo(user.getPhoneNo())
+                .roles(user.getRoles())
                 .build();
     }
 
@@ -23,12 +23,12 @@ public class UserConverter extends AbstractConverter<User, UserDto> {
     public User convertToEntity(UserDto userDto) {
         return User.builder()
                 .id(userDto.getId())
-                .login(userDto.getLogin())
+                .email(userDto.getEmail())
                 .password(userDto.getPassword())
                 .name(userDto.getName())
                 .surname(userDto.getSurname())
-                .email(userDto.getEmail())
                 .phoneNo(userDto.getPhoneNo())
+                .roles(userDto.getRoles())
                 .build();
     }
 }

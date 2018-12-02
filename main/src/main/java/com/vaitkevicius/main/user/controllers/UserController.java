@@ -1,27 +1,27 @@
 package com.vaitkevicius.main.user.controllers;
 
+import com.vaitkevicius.main.common.UrlConst;
+import com.vaitkevicius.main.common.httpresponsemessage.ResponseMessage;
+import com.vaitkevicius.main.common.validation.groups.Update;
 import com.vaitkevicius.main.user.data.dto.UserDto;
 import com.vaitkevicius.main.common.validation.groups.Create;
 import com.vaitkevicius.main.user.converters.UserConverter;
 import com.vaitkevicius.main.user.services.UserService;
 import com.vaitkevicius.main.user.validators.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.Errors;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping(value = UrlConst.USERS)
 public class UserController {
-
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     UserService userService;
@@ -29,67 +29,57 @@ public class UserController {
     @Autowired
     UserValidator userValidator;
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Autowired
+    private MessageSource messages;
+
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public UserDto getUser(@PathVariable String id){
-        userValidator.getUser(id);
-        logger.info("Getting user by id: {}", id);
-        return new UserConverter().toDto(userService.getUser(id));
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public UserDto getUser(@PathVariable String id) {
+        userValidator.validateGetUser(id);
+        return new UserConverter().convertToDto(userService.getUser(id));
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(value = "/all", method = RequestMethod.GET)
+    @ResponseBody
+    @RequestMapping(value = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<UserDto> getAllUsers() {
-        logger.info("Getting al users");
+        userValidator.validateGetAllUsers();
         return new UserConverter().toDto(userService.getAllUsers()
         );
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> delete(@PathVariable String id) {
-        userValidator.deleteUser(id);
-        logger.info("Deleting user by id: {}", id);
-        userService.delete(id);
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage deleteUser(@PathVariable String id) {
+        userValidator.validateGetUser(id);
+        userService.deleteUser(id);
+        return ResponseMessage.getSuccess(messages, "message.success.delete.user");
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> save(@RequestBody @Validated(Create.class) UserDto userDto, Errors errors) {
-        userValidator.validateCreate(userDto, errors);
-        logger.info("Saving user");
-        if(errors.hasErrors()) {
-            return new ResponseEntity<>(errors.getAllErrors(),HttpStatus.BAD_REQUEST);
-        }
-        UserConverter userConverter = new UserConverter();
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage createUser(@Validated({Create.class}) @RequestBody UserDto userDto, BindingResult bindingResult) {
+        userValidator.validateCreateUser(userDto, bindingResult);
+        userService.saveUser(new UserConverter().convertToEntity(userDto));
 
-        return new ResponseEntity<>(userConverter.toDto(userService.save(userConverter.toEntity(userDto))),
-                HttpStatus.OK
-        );
+        return ResponseMessage.getSuccess(messages, "message.success.create.user");
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> update(@RequestBody UserDto userDto, Errors errors) {
-        userValidator.validateCreate(userDto, errors);
-        logger.info("Updating user");
-        if (errors.hasErrors()) {
-            return new ResponseEntity<>(errors.getAllErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        UserConverter userConverter = new UserConverter();
-        return new ResponseEntity<>(userConverter.toDto(userService.save(userConverter.toEntity(userDto))),
-                HttpStatus.OK
-        );
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage updateUser( @PathVariable String id, @Validated({Update.class}) @RequestBody UserDto userDto, BindingResult bindingResult) {
+        userValidator.validateUpdateUser(userDto, bindingResult, id);
+        userService.updateUser(id, new UserConverter().convertToEntity(userDto));
+
+        return ResponseMessage.getSuccess(messages, "message.success.update.user");
     }
 }

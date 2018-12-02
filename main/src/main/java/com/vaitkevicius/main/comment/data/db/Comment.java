@@ -4,7 +4,10 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "Comment")
+import java.util.HashMap;
+import java.util.List;
+
+@Document(collection = "comment")
 @Data
 @Builder
 @Getter
@@ -19,8 +22,7 @@ public class Comment {
     private String commentAuthor;
     private String date;
     private String comment;
+    private List<String> words;
 
-    //private Map<String, String> wordWithValue;
-
-
+    private HashMap<String, Integer> commentWithValue;
 }

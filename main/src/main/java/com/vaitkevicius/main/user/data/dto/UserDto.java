@@ -1,15 +1,18 @@
 package com.vaitkevicius.main.user.data.dto;
 
+import com.vaitkevicius.main.role.data.db.Roles;
 import com.vaitkevicius.main.common.validation.groups.Create;
-import com.vaitkevicius.main.common.validation.groups.Update;
-import com.vaitkevicius.main.common.validation.validators.anotations.Name;
 import lombok.Builder;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
+import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.IndexDirection;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 @Log4j2
 @Data
@@ -17,19 +20,22 @@ import javax.validation.constraints.NotNull;
 public class UserDto {
 
     @NotNull
-    private String id;
+    private ObjectId id;
 
-    @NotNull @NotBlank
-    private String login;
-    @NotNull @NotBlank
+    @NotNull
+    @NotBlank
+    @Email
+    @Indexed(unique = true, direction = IndexDirection.DESCENDING, dropDups = true)
+    private String email;
+    @NotBlank(groups = {Create.class})
     private String password;
 
-    @NotNull @NotBlank
-    @Name(groups = { Create.class, Update.class })
+    @NotNull
     private String name;
-    @NotNull @NotBlank
+    @NotNull
     private String surname;
-    @Email
-    private String email;
     private String phoneNo;
+
+    private List<Roles> roles;
+
 }

@@ -13,6 +13,8 @@ public class CommentConverter extends AbstractConverter<Comment, CommentDto> {
                 .commentAuthor(comment.getCommentAuthor())
                 .date(comment.getDate())
                 .comment(comment.getComment())
+                .words(comment.getWords())
+                .commentWithValue(comment.getCommentWithValue())
                 .build();
     }
 
@@ -23,6 +25,8 @@ public class CommentConverter extends AbstractConverter<Comment, CommentDto> {
                 .commentAuthor(commentDto.getCommentAuthor())
                 .date(commentDto.getDate())
                 .comment(commentDto.getComment())
+                .words(commentDto.getWords())
+                .commentWithValue(commentDto.getCommentWithValue())
                 .build();
     }
 }

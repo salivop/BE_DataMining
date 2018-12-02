@@ -1,0 +1,27 @@
+schema {
+    query: Query
+}
+
+type Query {
+    emojis: [Emoji]
+    emoji(id: String): Emoji
+}
+
+type Emoji {
+    id: String
+    emoji: String
+    emojiValue: String
+}
+
+
+input EmojiInput {
+    emoji: String!
+}
+
+type Mutation {
+    createEmoji(input: CreateEmojiInput!): Emoji!
+    }
+
+input CreateEmojiInput {
+    emoji: String!
+}

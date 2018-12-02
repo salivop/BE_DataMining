@@ -1,27 +1,37 @@
 package com.vaitkevicius.main.user.data.db;
 
-import com.vaitkevicius.main.common.data.AbstractEntity;
+import com.vaitkevicius.main.role.data.db.Roles;
 import lombok.*;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "user")
+import java.util.List;
+
+@Document(collection = "users")
 @Data
 @Builder
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class User extends AbstractEntity {
+public class User  {
 
     @Id
-    private String id;
+    private ObjectId id;
 
-    private String login;
+    private String email;
     private String password;
+
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 
     private String name;
     private String surname;
-    private String email;
     private String phoneNo;
+
+    private List<Roles> roles;
+
 }

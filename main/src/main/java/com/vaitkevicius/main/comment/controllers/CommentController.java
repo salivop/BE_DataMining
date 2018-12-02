@@ -3,23 +3,29 @@ package com.vaitkevicius.main.comment.controllers;
 import com.vaitkevicius.main.comment.converters.CommentConverter;
 import com.vaitkevicius.main.comment.data.dto.CommentDto;
 import com.vaitkevicius.main.comment.services.CommentService;
+//import com.vaitkevicius.main.comment.validators.CommentValidator;
 import com.vaitkevicius.main.comment.validators.CommentValidator;
+import com.vaitkevicius.main.common.UrlConst;
+import com.vaitkevicius.main.common.httpresponsemessage.ResponseMessage;
 import com.vaitkevicius.main.common.validation.groups.Create;
 import com.vaitkevicius.main.common.validation.groups.Update;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.print.attribute.standard.Media;
 import java.util.List;
 
 @RestController
-@RequestMapping("/comment")
-@Log4j2
+@RequestMapping(UrlConst.COMMENT)
 public class CommentController {
 
     @Autowired
@@ -28,63 +34,60 @@ public class CommentController {
     @Autowired
     CommentValidator commentValidator;
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @Autowired
+    private MessageSource messages;
+
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('USER, ADMIN')")
     public CommentDto getComment(@PathVariable String id) {
-        commentValidator.getComment(id);
-        log.info("Getting comment by id: {}", id);
-        return new CommentConverter().toDto(commentService.findCommentById(id));
+        commentValidator.validateGetComment(id);
+        return new CommentConverter().toDto(commentService.getComment(id));
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_USER')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<CommentDto> getAllComments() {
-        log.info("Getting all comments");
+        commentValidator.validateGetAllComments();
         return new CommentConverter().toDto(commentService.getAllComments()
         );
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<?> saveComment(@RequestBody @Validated(Create.class) CommentDto commentDto, Errors errors){
-        commentValidator.validateCreate(commentDto, errors);
-        log.info("Saving comment to DB");
-        if(errors.hasErrors()) {
-            return new ResponseEntity<>(errors.getAllErrors(), HttpStatus.BAD_REQUEST);
-        }
-        CommentConverter commentConverter = new CommentConverter();
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage saveComment(@Validated(Create.class) @RequestBody CommentDto commentDto, BindingResult bindingResult) {
+        commentValidator.validateCreate(commentDto, bindingResult);
+        commentService.saveComment(new CommentConverter().convertToEntity(commentDto));
 
-        return new ResponseEntity<>(commentConverter.toDto(commentService.saveComment(commentConverter.toEntity(commentDto))),
-                HttpStatus.OK);
+        return ResponseMessage.getSuccess(messages, "message.success.create.comment");
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.PUT)
-    public ResponseEntity<?> updateComment(@RequestBody @Validated(Update.class) CommentDto commentDto, Errors errors) {
-        if(errors.hasErrors()) {
-            return new ResponseEntity<>(errors.getAllErrors(), HttpStatus.UNPROCESSABLE_ENTITY);
-        }
-        CommentConverter commentConverter = new CommentConverter();
-        return new ResponseEntity<>(commentConverter.toDto(commentService.saveComment(commentConverter.toEntity(commentDto))),
-                HttpStatus.OK);
+    @ResponseBody
+    @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage updateComment(@PathVariable String id, @Validated
+            (Update.class) @RequestBody CommentDto commentDto, BindingResult bindingResult) {
+        commentValidator.validateUpdateComment(commentDto, bindingResult, id);
+        commentService.saveComment(new CommentConverter().convertToEntity(commentDto));
+
+        return ResponseMessage.getSuccess(messages, "message.success.update.comment");
+
     }
 
-    @ResponseBody
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(code = HttpStatus.OK)
-    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-    public ResponseEntity<?> deleteComment(@PathVariable String id) {
-        commentValidator.deleteComment(id);
-        log.info("Deleting comment by id: {}", id);
-        commentService.removeComment(commentService.findCommentById(id));
-        return new ResponseEntity<Void>(HttpStatus.OK);
+    @ResponseBody
+    @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseMessage deleteComment(@PathVariable String id) {
+        commentValidator.validateDeleteComment(id);
+        commentService.deleteComment(id);
+
+        return ResponseMessage.getSuccess(messages, "message.success.delete.comment");
     }
 }
