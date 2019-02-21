@@ -11,6 +11,7 @@ public class UrlConst {
     public static final String ROLES = "/roles";
     public static final String EMOJI = "/emoji";
     public static final String COMMENT = "/comment";
+    public static final String EMOTICON = "/emoticon";
     public static final String WORD = "/word";
     public static final String HOME = "/home";
     public static final String PING = "/ping";

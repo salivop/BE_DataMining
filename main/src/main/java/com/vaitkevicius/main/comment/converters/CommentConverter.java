@@ -11,10 +11,14 @@ public class CommentConverter extends AbstractConverter<Comment, CommentDto> {
         return CommentDto.builder()
                 .id(comment.getId())
                 .commentAuthor(comment.getCommentAuthor())
+                .cleanedComment(comment.getCleanedComment())
                 .date(comment.getDate())
                 .comment(comment.getComment())
                 .words(comment.getWords())
-                .commentWithValue(comment.getCommentWithValue())
+                .mainWordFormsLT(comment.getMainWordFormsLT())
+                .mainWordFormsLTRoots(comment.getMainWordFormsLTRoots())
+                .positiveCommentValue(comment.getPositiveCommentValue())
+                .negativeCommentValue(comment.getNegativeCommentValue())
                 .build();
     }
 
@@ -23,10 +27,14 @@ public class CommentConverter extends AbstractConverter<Comment, CommentDto> {
         return Comment.builder()
                 .id(commentDto.getId())
                 .commentAuthor(commentDto.getCommentAuthor())
+                .cleanedComment(commentDto.getCleanedComment())
                 .date(commentDto.getDate())
                 .comment(commentDto.getComment())
                 .words(commentDto.getWords())
-                .commentWithValue(commentDto.getCommentWithValue())
+                .mainWordFormsLT(commentDto.getMainWordFormsLT())
+                .mainWordFormsLTRoots(commentDto.getMainWordFormsLTRoots())
+                .positiveCommentValue(commentDto.getPositiveCommentValue())
+                .negativeCommentValue(commentDto.getNegativeCommentValue())
                 .build();
     }
 }

@@ -4,7 +4,9 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "word")
+import java.util.Date;
+
+@Document(collection = "words")
 @Data
 @Builder
 @Getter
@@ -16,6 +18,17 @@ public class Word {
     @Id
     private String id;
 
-    private String word;
-    private int wordValue;
+    private String mainWordFormLT;
+    private String mainWordFormWithoutLTLetter;
+
+    private String mainWordFormLTRoot;
+    private String mainWordFormRootWithoutLTLetter;
+
+    private Date wordSaveTime;
+
+    private String wordType;
+    private String category;
+    private String wordWeight;
+    private String semanticEvaluation;
+
 }

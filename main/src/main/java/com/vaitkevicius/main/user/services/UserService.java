@@ -6,7 +6,7 @@ import com.vaitkevicius.main.user.data.db.User;
 import com.vaitkevicius.main.user.data.repositories.UserRepository;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,8 +21,8 @@ public class UserService {
     @Autowired
     RolesRepository rolesRepository;
 
-    @Autowired
-    PasswordEncoder passwordEncoder;
+//    @Autowired
+//    PasswordEncoder passwordEncoder;
 
     @Autowired
     private ExceptionFactory exceptionFactory;
@@ -43,7 +43,8 @@ public class UserService {
 
     public User saveUser(User user) {
         user.setRoles(rolesRepository.findOneByRoles("ADMIN"));
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword("test");
+//        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAccountNonExpired(true);
         user.setAccountNonLocked(true);
         user.setCredentialsNonExpired(true);
@@ -58,7 +59,8 @@ public class UserService {
         dbUser.setSurname(user.getSurname());
         dbUser.setEmail(user.getEmail());
         dbUser.setPhoneNo(user.getPhoneNo());
-        dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
+        dbUser.setPassword("test");
+//        dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(dbUser);
     }
 

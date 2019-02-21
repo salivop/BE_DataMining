@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +34,7 @@ public class RoleController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public RolesDto getRole(@PathVariable String id) {
         roleValidator.validateGetRole(id);
         return new RoleConverter().toDto(roleService.getRole(id));
@@ -43,7 +43,7 @@ public class RoleController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public List<RolesDto> getAllRoles() {
         roleValidator.validateGetAllRoles();
         return new RoleConverter().toDto(roleService.getAllRoles()
@@ -53,7 +53,7 @@ public class RoleController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseMessage deleteRole(@PathVariable String id) {
         roleValidator.validateGetRole(id);
         roleService.deleteRole(id);
@@ -63,7 +63,7 @@ public class RoleController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseMessage saveRole(@Validated({Create.class}) @RequestBody RolesDto rolesDto, BindingResult bindingResult) {
         roleValidator.validateCreateRole(rolesDto, bindingResult);
         roleService.saveRole(new RoleConverter().convertToEntity(rolesDto));

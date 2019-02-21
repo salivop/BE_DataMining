@@ -32,7 +32,7 @@ public class WordValidator extends AbstractValidator {
     }
 
     public void validateGetWordByWord(String word) {
-        if (!wordRepository.existsByWord(word)) {
+        if (!wordRepository.existsByMainWordFormLT(word)) {
             throwException(null, GET, "WordDto.word.doesNotExist");
         }
     }
@@ -54,10 +54,10 @@ public class WordValidator extends AbstractValidator {
     }
 
     private void validateWordValue(WordDto wordDto, Word dbWord, Errors errors) {
-        if (!(wordDto.getWordValue() >= 0) || !(wordDto.getWordValue() <= 10)) {
-            rejectValue(errors, "wordValue", "WordDto.wordValue.incorrect");
+//        if (!(wordDto.getSemanticEvaluation() >= 0) || !(wordDto.getSemanticEvaluation() <= 10)) {
+//            rejectValue(errors, "wordValue", "WordDto.wordValue.incorrect");
             return;
-        }
+
     }
 
     public void validateUpdateWord(WordDto wordDto, Errors errors, String id) {

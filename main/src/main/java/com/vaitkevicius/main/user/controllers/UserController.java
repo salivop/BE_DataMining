@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
+//import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +35,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public UserDto getUser(@PathVariable String id) {
         userValidator.validateGetUser(id);
         return new UserConverter().convertToDto(userService.getUser(id));
@@ -44,7 +44,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public List<UserDto> getAllUsers() {
         userValidator.validateGetAllUsers();
         return new UserConverter().toDto(userService.getAllUsers()
@@ -54,7 +54,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(value = "/{id}", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseMessage deleteUser(@PathVariable String id) {
         userValidator.validateGetUser(id);
         userService.deleteUser(id);
@@ -64,7 +64,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseMessage createUser(@Validated({Create.class}) @RequestBody UserDto userDto, BindingResult bindingResult) {
         userValidator.validateCreateUser(userDto, bindingResult);
         userService.saveUser(new UserConverter().convertToEntity(userDto));
@@ -75,7 +75,7 @@ public class UserController {
     @ResponseStatus(code = HttpStatus.OK)
     @ResponseBody
     @RequestMapping(method = RequestMethod.PUT, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAuthority('ADMIN')")
+//    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseMessage updateUser( @PathVariable String id, @Validated({Update.class}) @RequestBody UserDto userDto, BindingResult bindingResult) {
         userValidator.validateUpdateUser(userDto, bindingResult, id);
         userService.updateUser(id, new UserConverter().convertToEntity(userDto));

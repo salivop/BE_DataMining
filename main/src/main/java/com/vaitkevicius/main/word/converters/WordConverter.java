@@ -10,8 +10,16 @@ public class WordConverter extends AbstractConverter<Word, WordDto> {
     public WordDto convertToDto(Word word) {
         return WordDto.builder()
                 .id(word.getId())
-                .word(word.getWord())
-                .wordValue(word.getWordValue())
+                .mainWordFormLT(word.getMainWordFormLT())
+                .mainWordFormWithoutLTLetter(word.getMainWordFormWithoutLTLetter())
+                .mainWordFormLT(word.getMainWordFormLT())
+                .mainWordFormLTRoot(word.getMainWordFormLTRoot())
+                .mainWordFormRootWithoutLTLetter(word.getMainWordFormRootWithoutLTLetter())
+                .wordSaveTime(word.getWordSaveTime())
+                .category(word.getCategory())
+                .wordWeight(word.getWordWeight())
+                .wordType(word.getWordType())
+                .semanticEvaluation(word.getSemanticEvaluation())
                 .build();
     }
 
@@ -19,8 +27,18 @@ public class WordConverter extends AbstractConverter<Word, WordDto> {
     public Word convertToEntity(WordDto wordDto) {
         return Word.builder()
                 .id(wordDto.getId())
-                .word(wordDto.getWord())
-                .wordValue(wordDto.getWordValue())
+                .mainWordFormLT(wordDto.getMainWordFormLT())
+                .mainWordFormWithoutLTLetter(wordDto.getMainWordFormWithoutLTLetter())
+                .mainWordFormLT(wordDto.getMainWordFormLT())
+                .mainWordFormLTRoot(wordDto.getMainWordFormLTRoot())
+                .mainWordFormRootWithoutLTLetter(wordDto.getMainWordFormRootWithoutLTLetter())
+                .wordSaveTime(wordDto.getWordSaveTime())
+                .category(wordDto.getCategory())
+                .wordWeight(wordDto.getWordWeight())
+                .wordType(wordDto.getWordType())
+                .semanticEvaluation(wordDto.getSemanticEvaluation())
                 .build();
     }
 }
+
+

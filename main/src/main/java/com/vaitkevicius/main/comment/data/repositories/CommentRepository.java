@@ -8,4 +8,8 @@ import org.springframework.stereotype.Repository;
 public interface CommentRepository extends MongoRepository<Comment, String> {
 
     Comment findOneById(String id);
+    Comment findOneByDate(String date);
+
+    Comment findFirstByDateIgnoreCase(String date);
+    Comment findFirstByCommentAuthor(String commentAuthor);
 }

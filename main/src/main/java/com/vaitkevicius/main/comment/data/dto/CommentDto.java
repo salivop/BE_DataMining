@@ -22,10 +22,13 @@ public class CommentDto {
 
     private String commentAuthor;
     private String date;
-    @NotNull(message = "Comment does not exists")
-    @NotBlank
     private String comment;
-    private List<String> words;
+    private String cleanedComment;
 
-    private HashMap<String, Integer> commentWithValue;
+    private List<String> words;
+    private List<String> mainWordFormsLT;
+    private List<String> mainWordFormsLTRoots;
+
+    private double positiveCommentValue;
+    private double negativeCommentValue;
 }

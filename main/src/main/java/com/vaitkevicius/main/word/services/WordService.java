@@ -28,7 +28,7 @@ public class WordService {
     }
 
     public Word getWordByWord(String byWord) {
-        Word word = wordRepository.findFirstByWord(byWord);
+        Word word = wordRepository.findFirstByMainWordFormLT(byWord);
         if (word == null) {
             throw exceptionFactory.getResourseNotFoundException("message.error.wordNotFound", byWord);
         }
